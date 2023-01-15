@@ -10,6 +10,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/Twofold-One/gouser-back/internal/data"
 	_ "github.com/lib/pq"
 )
 
@@ -26,6 +27,7 @@ type config struct {
 type application struct {
 	config config
 	logger *log.Logger
+	models data.Models
 }
 
 func main() {
@@ -34,6 +36,7 @@ func main() {
 	flag.IntVar(&cfg.port, "port", 4000, "API server port")
 	flag.StringVar(&cfg.env, "env", "development", "Environment(development|staging|production)")
 	flag.StringVar(&cfg.db.dsn, "db-dsn", os.Getenv("GOUSER_DB_DSN"), "PostgreSQL DSN")
+
 	flag.Parse()
 
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
@@ -44,12 +47,12 @@ func main() {
 	}
 
 	defer db.Close()
-
 	logger.Printf("database connection pool established")
 
 	app := application{
 		config: cfg,
 		logger: logger,
+		models: data.NewModels(db),
 	}
 
 	srv := &http.Server{

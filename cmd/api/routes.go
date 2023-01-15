@@ -14,5 +14,8 @@ func (app *application) routes() *httprouter.Router {
 
 	router.HandlerFunc(http.MethodGet, "/v1/healthcheck", app.healthchekHandler)
 
+	router.HandlerFunc(http.MethodPost, "/v1/users", app.registerUserHandler)
+
+	// TODO implement recoverPanic and rateLimiter middleware
 	return router
 }
